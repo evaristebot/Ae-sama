@@ -1,65 +1,52 @@
+const fs = require("fs-extra");
+
 module.exports = {
-	config: {
-		name: "onlyadminbox",
-		aliases: ["onlyadbox", "adboxonly", "adminboxonly"],
-		version: "1.3",
-		author: "NTKhang",
-		countDown: 5,
-		role: 1,
-		description: {
-			vi: "bật/tắt chế độ chỉ quản trị của viên nhóm mới có thể sử dụng bot",
-			en: "turn on/off only admin box can use bot"
-		},
-		category: "box chat",
-		guide: {
-			vi: "   {pn} [on | off]: bật/tắt chế độ chỉ quản trị viên nhóm mới có thể sử dụng bot"
-				+ "\n   {pn} noti [on | off]: bật/tắt thông báo khi người dùng không phải là quản trị viên nhóm sử dụng bot",
-			en: "   {pn} [on | off]: turn on/off the mode only admin of group can use bot"
-				+ "\n   {pn} noti [on | off]: turn on/off the notification when user is not admin of group use bot"
-		}
-	},
+    config: {
+        name: "restart",
+        aliases: ["rdm"],
+        version: "1.0",
+        author: "𝗔𝗘𝗦𝗧𝗛𝗘𝗥",
+        countDown: 5,
+        role: 2,
+        shortDescription: {
+            vi: "Khởi động lại bot",
+            en: "Restart bot"
+        },
+        longDescription: {
+            vi: "Khởi động lại bot",
+            en: "Restart bot"
+        },
+        category: "Owner",
+        guide: {
+            vi: "   {pn}: Khởi động lại bot",
+            en: "   {pn}: Restart bot"
+        }
+    },
 
-	langs: {
-		vi: {
-			turnedOn: "Đã bật chế độ chỉ quản trị viên nhóm mới có thể sử dụng bot",
-			turnedOff: "Đã tắt chế độ chỉ quản trị viên nhóm mới có thể sử dụng bot",
-			turnedOnNoti: "Đã bật thông báo khi người dùng không phải là quản trị viên nhóm sử dụng bot",
-			turnedOffNoti: "Đã tắt thông báo khi người dùng không phải là quản trị viên nhóm sử dụng bot",
-			syntaxError: "Sai cú pháp, chỉ có thể dùng {pn} on hoặc {pn} off"
-		},
-		en: {
-			turnedOn: "Turned on the mode only admin of group can use bot",
-			turnedOff: "Turned off the mode only admin of group can use bot",
-			turnedOnNoti: "Turned on the notification when user is not admin of group use bot",
-			turnedOffNoti: "Turned off the notification when user is not admin of group use bot",
-			syntaxError: "Syntax error, only use {pn} on or {pn} off"
-		}
-	},
+    langs: {
+        vi: {
+            restartting: "𝗥𝗘𝗦𝗧𝗔𝗥𝗧\n[🔴🔵⚪....] "
+        },
+        en: {
+            restartting: "𝗥𝗘𝗦𝗧𝗔𝗥𝗧\n[🔴🔵⚪....] "
+        }
+    },
 
-	onStart: async function ({ args, message, event, threadsData, getLang }) {
-		let isSetNoti = false;
-		let value;
-		let keySetData = "data.onlyAdminBox";
-		let indexGetVal = 0;
+    onLoad: function ({ api }) {
+        const pathFile = `${__dirname}/tmp/restart.txt`;
+        if (fs.existsSync(pathFile)) {
+            const [tid, time] = fs.readFileSync(pathFile, "utf-8").split(" ");
+            api.sendMessage(`✔ ××𝙎𝙐𝘾𝘾𝙀𝙎𝙎××\n━━━━━━━━━━━━\n✦ 🛄 𝗕𝗢𝗧 restarted :\n✦﹝⏱TIME﹞: ${(Date.now() - time) / 1000}s🚀`, tid);
+            fs.unlinkSync(pathFile);
+            api.sendMessage({ sticker: "2379537642070973" }, tid); // Corrected event.threadID to tid
+        }
+    },
 
-		if (args[0] == "noti") {
-			isSetNoti = true;
-			indexGetVal = 1;
-			keySetData = "data.hideNotiMessageOnlyAdminBox";
-		}
-
-		if (args[indexGetVal] == "on")
-			value = true;
-		else if (args[indexGetVal] == "off")
-			value = false;
-		else
-			return message.reply(getLang("syntaxError"));
-
-		await threadsData.set(event.threadID, isSetNoti ? !value : value, keySetData);
-
-		if (isSetNoti)
-			return message.reply(value ? getLang("turnedOnNoti") : getLang("turnedOffNoti"));
-		else
-			return message.reply(value ? getLang("turnedOn") : getLang("turnedOff"));
-	}
+    onStart: async function ({ message, event, getLang, api }) {
+        const pathFile = `${__dirname}/tmp/restart.txt`;
+        api.sendMessage({ sticker: "4046885555358632" }, event.threadID); // Added missing closing parenthesis
+        fs.writeFileSync(pathFile, `${event.threadID} ${Date.now()}`);
+        await message.reply(getLang("restartting"));
+        process.exit(2);
+    }
 };
