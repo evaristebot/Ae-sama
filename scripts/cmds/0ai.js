@@ -11,13 +11,18 @@ const fonts = {
     S: "𝗦", T: "𝗧", U: "𝗨", V: "𝗩", W: "𝗪", X: "𝗫", Y: "𝗬", Z: "𝗭"
     }
 };
+const stickers = [
+  "254594546003916", "254595732670464", "254593389337365",
+  "37117808696806", "254597316003639", "254598806003490",
+  "254596219337082", "2379537642070973", "2379545095403561",
+  "2379551785402892", "254597059336998"
+];
+const rolePlay = "quand tu répond à cette question ajoutes des emojis convenable :\n\n";
 
 const Prefixes = [
   'ae',
   'ai',
   'mitama',
-  'ask',
-  'mitantsoa', 
 ];
 
 module.exports = {
@@ -41,18 +46,17 @@ module.exports = {
       }
       const prompt = event.body.substring(prefix.length).trim();
       if (!prompt) {
-        await message.reply("");
-api.sendMessage({ sticker: "387545578037993" }, event.threadID);
-api.sendMessage("🟢 𝗛𝖾𝗅𝗅𝗈 ⁉️" , event.threadID);
-api.setMessageReaction("🟡", event.messageID, () => {}, true);
+      const randomSticker = stickers[Math.floor(Math.random() * stickers.length)];
+        await api.sendMessage({ sticker: randomSticker }, event.threadID);
+api.setMessageReaction("📚", event.messageID, () => {}, true);
         return;
       }
       const senderID = event.senderID;
       const senderInfo = await api.getUserInfo([senderID]);
       const senderName = senderInfo[senderID].name;
-      const response = await axios.get(`https://api.kenliejugarap.com/freegpt4o8k/?question=${encodeURIComponent(prompt)}`);
-      const answer = `🟢 𝘼𝙀-𝙎𝙏𝙃𝙀𝙍 ⚪ :\n\n${response.data.response} 🟡`;
-api.setMessageReaction("🟢", event.messageID, () => {}, true);
+      const response = await axios.get(`https://sandipbaruwal.onrender.com/gemini?prompt=${encodeURIComponent(rolePlay + prompt)}`);
+      const answer = `📚 𝘼𝙀-𝙎𝙏𝙃𝙀𝙍 📚 :\n\n${response.data.answer} `;
+api.setMessageReaction("🌱", event.messageID, () => {}, true);
 
       //apply const font to each letter in the answer
       let formattedAnswer = "";
