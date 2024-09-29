@@ -1,12 +1,12 @@
 const fs = require('fs');
 module.exports = {
   config: {
-    name: "aesther",
+    name: "evariste",
     version: "1",
-    author: "Thea",
+    author: "aesther",
     countDown: 5,
     role: 0,
-    shortDescription: "Groove de Thea 😜👍🏻",
+    shortDescription: "Groove de Evariste 😜👍🏻",
     longDescription: "no prefix",
     category: "no prefix",
   },
